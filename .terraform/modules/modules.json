@@ -1,1 +1,1 @@
-{"Modules":[{"Key":"oci_gluster","Source":"./module","Dir":"module"},{"Key":"","Source":"","Dir":"."}]}
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"oci_gluster","Source":"git::https://github.com/kernell128/oci_gluster.git","Dir":".terraform/modules/oci_gluster"},{"Key":"oci_gluster.oci_gluster","Source":"./module","Dir":".terraform/modules/oci_gluster/module"}]}
