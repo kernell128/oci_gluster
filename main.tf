@@ -29,7 +29,7 @@ module "oci_gluster" {
   /*
     Deploy Gluster in OCI
   */
-  source                = "git::https://github.com/kernell128/oci_gluster.git"
+  source                = "./module"
   tenancy_ocid          = local.tenancy_ocid
   target_compartment_id = local.target_compartment_id
   vcn_compartment_id    = local.vcn_compartment_id
