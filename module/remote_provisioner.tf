@@ -1,3 +1,8 @@
+locals {
+  count_with_zero = (var.number_of_nodes - 1)
+}
+
+#Block 1 - Block volume phase
 resource "null_resource" "gs-node-iscii" {
   count      = var.number_of_nodes
   depends_on = [oci_core_volume_attachment.attach_vol_gs]
@@ -20,7 +25,7 @@ resource "null_resource" "gs-node-iscii" {
     ]
   }
 }
-
+#Block 2 - GlusterFS phase
 resource "null_resource" "deploy_glusterfs" {
   count = var.number_of_nodes
   depends_on = [
@@ -54,8 +59,9 @@ resource "null_resource" "deploy_glusterfs" {
     ]
   }
 }
-
-resource "null_resource" "deploy_gluster_volume" {
+#Block 3a - GlusterFS first volume phase
+resource "null_resource" "gluster_cluster_probe" {
+  count = local.count_with_zero
   depends_on = [
     null_resource.deploy_glusterfs,
   ]
@@ -68,9 +74,26 @@ resource "null_resource" "deploy_gluster_volume" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo gluster peer probe gsnode1",
-      "sudo gluster peer probe gsnode2",
-      "sudo gluster volume create ${var.gs_vol_name} disperse 3 gsnode{0..2}:${var.fs_mount_point}/${var.gs_vol_name}",
+      "sudo gluster peer probe gsnode${(count.index + 1)}",
+    ]
+  }
+}
+
+#Block 3b - GlusterFS first volume phase
+resource "null_resource" "deploy_gluster_volume" {
+  depends_on = [
+    null_resource.gluster_cluster_probe,
+  ]
+  connection {
+    agent       = false
+    timeout     = "30m"
+    host        = oci_core_instance.gs-node[0].private_ip
+    user        = "opc"
+    private_key = file(var.private_key_path)
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo gluster volume create ${var.gs_vol_name} disperse ${var.number_of_nodes} gsnode{0..${local.count_with_zero}}:${var.fs_mount_point}/${var.gs_vol_name}",
       "sudo gluster volume start ${var.gs_vol_name}",
     ]
   }

@@ -1,6 +1,6 @@
 resource "oci_core_volume" "block_vol_gs" {
   count               = var.number_of_nodes
-  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name")
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[random_integer.ads.result], "name")
   compartment_id      = var.target_compartment_id
   display_name        = "gs-vol-${count.index}"
   size_in_gbs         = var.bv_size_in_gbs

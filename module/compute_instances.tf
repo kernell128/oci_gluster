@@ -1,6 +1,6 @@
 resource "oci_core_instance" "gs-node" {
   count               = var.number_of_nodes
-  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name")
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[random_integer.ads.result], "name")
   compartment_id      = var.target_compartment_id
   shape               = var.gluster_node_shape
   create_vnic_details {
