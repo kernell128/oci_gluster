@@ -23,6 +23,7 @@ locals {
   fs_dev                = var.fs_dev
   fs_mount_point        = var.fs_mount_point
   gs_vol_name           = var.gs_vol_name
+  gluster_redundancy    = var.gluster_redundancy
 
 }
 module "oci_gluster" {
@@ -43,4 +44,5 @@ module "oci_gluster" {
   fs_dev                = local.fs_dev
   fs_mount_point        = local.fs_mount_point
   gs_vol_name           = local.gs_vol_name
+  gluster_redundancy    = local.gluster_redundancy
 }

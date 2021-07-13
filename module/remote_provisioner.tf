@@ -1,5 +1,6 @@
 locals {
   count_with_zero = (var.number_of_nodes - 1)
+  volume_config =   ( var.number_of_nodes / 2 )
 }
 
 #Block 1 - Block volume phase
@@ -93,7 +94,7 @@ resource "null_resource" "deploy_gluster_volume" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo gluster volume create ${var.gs_vol_name} disperse ${var.number_of_nodes} gsnode{0..${local.count_with_zero}}:${var.fs_mount_point}/${var.gs_vol_name}",
+      "echo \"2\" | sudo gluster volume create ${var.gs_vol_name} disperse ${var.number_of_nodes} redundancy ${var.gluster_redundancy} gsnode{0..${local.count_with_zero}}:${var.fs_mount_point}/${var.gs_vol_name} force",
       "sudo gluster volume start ${var.gs_vol_name}",
     ]
   }
